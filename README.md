@@ -93,7 +93,7 @@ src/app/
 - **Signals + RxJS.** RxJS handles async streams (timers, cancellation). Signals hold UI state.
   Form events are bridged into signals through a `formVersion` counter.
 - **Plain CSS with design tokens** (CSS variables) instead of a UI library. This keeps
-  dependencies minimal (only the official Angular CDK is added). The theme is a neutral charcoal
+  dependencies minimal (only the official Angular CDK is added). The theme is a dark teal
   primary on white, and focus states change the border colour instead of drawing glow rings.
 - **Custom dropdown and date-time picker.** Native `<select>` menus and the `datetime-local`
   popup are drawn by the browser and can't be styled. Both replacements implement

@@ -10,10 +10,10 @@
   --text: #0f172a;
   --text-muted: #64748b;
   --text-subtle: #94a3b8;
-  /* Charcoal primary: change these three lines to re-theme the app */
-  --primary: #18181b;
-  --primary-hover: #3f3f46;
-  --primary-soft: #f4f4f5;
+  /* Dark teal primary: change these three lines to re-theme the app */
+  --primary: #115e59;
+  --primary-hover: #134e4a;
+  --primary-soft: #f0fdfa;
   --danger: #dc2626;
   --danger-soft: #fef2f2;
   --success: #059669;
