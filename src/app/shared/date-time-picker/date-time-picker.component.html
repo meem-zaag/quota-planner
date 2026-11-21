@@ -1,0 +1,109 @@
+<button
+  #trigger
+  type="button"
+  class="trigger"
+  cdkOverlayOrigin
+  #origin="cdkOverlayOrigin"
+  aria-haspopup="dialog"
+  [id]="inputId()"
+  [class.open]="open()"
+  [class.invalid]="invalid()"
+  [disabled]="disabled()"
+  [attr.aria-expanded]="open()"
+  (click)="toggle()"
+  (keydown.arrowdown)="$event.preventDefault(); openPanel()"
+>
+  <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+    <rect x="3" y="4.5" width="18" height="16" rx="2" /><path d="M3 9.5h18M8 3v3M16 3v3" />
+  </svg>
+  <span class="trigger-label" [class.placeholder]="!displayText()">{{ displayText() ?? 'Select date & time' }}</span>
+  <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+    <path d="m6 9 6 6 6-6" />
+  </svg>
+</button>
+
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="origin"
+  [cdkConnectedOverlayOpen]="open()"
+  [cdkConnectedOverlayPositions]="positions"
+  [cdkConnectedOverlayPush]="true"
+  (overlayOutsideClick)="close()"
+  (detach)="close()"
+>
+  <div class="panel" role="dialog" aria-label="Choose pickup date and time" [id]="panelId" (keydown)="onPanelKeydown($event)">
+    <div class="calendar">
+      <div class="cal-header">
+        <button type="button" class="nav" (click)="shiftMonth(-1)" [disabled]="!canGoBack()" aria-label="Previous month">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
+        </button>
+        <span class="month" aria-live="polite">{{ monthLabel() }}</span>
+        <button type="button" class="nav" (click)="shiftMonth(1)" aria-label="Next month">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
+        </button>
+      </div>
+      <div class="grid weekdays" aria-hidden="true">
+        @for (w of weekdays; track w) {
+          <span>{{ w }}</span>
+        }
+      </div>
+      <div class="grid">
+        @for (cell of days(); track cell.date.getTime()) {
+          <button
+            type="button"
+            class="day"
+            [class.muted]="!cell.inMonth"
+            [class.today]="cell.isToday"
+            [class.selected]="cell.isSelected"
+            [disabled]="cell.isPast"
+            [attr.aria-label]="cell.label"
+            [attr.aria-pressed]="cell.isSelected"
+            (click)="pickDay(cell)"
+          >
+            {{ cell.day }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <div class="time">
+      <div class="time-head">Time</div>
+      <div class="time-cols" [class.inactive]="!selectedDate()">
+        <div class="time-col" role="listbox" aria-label="Hour">
+          @for (h of hours; track h) {
+            <button
+              type="button"
+              class="time-item"
+              [class.selected]="selectedDate()?.getHours() === h"
+              [disabled]="!selectedDate() || isHourPast(h)"
+              (click)="pickHour(h)"
+            >
+              {{ h < 10 ? '0' + h : h }}
+            </button>
+          }
+        </div>
+        <div class="time-col" role="listbox" aria-label="Minute">
+          @for (m of minutes; track m) {
+            <button
+              type="button"
+              class="time-item"
+              [class.selected]="selectedDate()?.getMinutes() === m"
+              [disabled]="!selectedDate() || isMinutePast(m)"
+              (click)="pickMinute(m)"
+            >
+              {{ m < 10 ? '0' + m : m }}
+            </button>
+          }
+        </div>
+      </div>
+      @if (!selectedDate()) {
+        <p class="time-hint">Pick a date first</p>
+      }
+    </div>
+
+    <div class="footer">
+      <span class="summary">{{ displayText() ?? 'No date selected' }}</span>
+      <button type="button" class="btn btn-primary btn-sm" (click)="close(true)">Done</button>
+    </div>
+  </div>
+</ng-template>

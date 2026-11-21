@@ -1,0 +1,65 @@
+<button
+  #trigger
+  type="button"
+  class="trigger"
+  cdkOverlayOrigin
+  #origin="cdkOverlayOrigin"
+  role="combobox"
+  aria-haspopup="listbox"
+  [id]="inputId()"
+  [class.open]="open()"
+  [class.invalid]="invalid()"
+  [class.placeholder]="!selected()"
+  [disabled]="disabled()"
+  [attr.aria-expanded]="open()"
+  [attr.aria-controls]="listId"
+  [attr.aria-activedescendant]="open() && activeIndex() >= 0 ? listId + '-' + activeIndex() : null"
+  (click)="toggle()"
+  (keydown)="onKeydown($event)"
+  (blur)="onBlur()"
+>
+  <span class="trigger-label">{{ selected()?.label ?? placeholder() }}</span>
+  <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+    <path d="m6 9 6 6 6-6" />
+  </svg>
+</button>
+
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="origin"
+  [cdkConnectedOverlayOpen]="open()"
+  [cdkConnectedOverlayPositions]="positions"
+  [cdkConnectedOverlayMinWidth]="panelWidth()"
+  (overlayOutsideClick)="close()"
+  (detach)="close()"
+>
+  <ul class="menu" role="listbox" [id]="listId">
+    @for (opt of options(); track opt.value; let i = $index) {
+      <li
+        role="option"
+        class="option"
+        [id]="listId + '-' + i"
+        [class.active]="i === activeIndex()"
+        [class.selected]="opt.value === value()"
+        [class.disabled]="opt.disabled"
+        [attr.aria-selected]="opt.value === value()"
+        [attr.aria-disabled]="opt.disabled || null"
+        (mouseenter)="!opt.disabled && activeIndex.set(i)"
+        (mousedown)="$event.preventDefault()"
+        (click)="choose(opt)"
+      >
+        <span class="option-text">
+          <span>{{ opt.label }}</span>
+          @if (opt.note) {
+            <span class="option-note">{{ opt.note }}</span>
+          }
+        </span>
+        @if (opt.value === value()) {
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+            <path d="M20 6 9 17l-5-5" />
+          </svg>
+        }
+      </li>
+    }
+  </ul>
+</ng-template>

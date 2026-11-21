@@ -1,0 +1,38 @@
+<section class="card" [class.collapsed]="collapsed()" [attr.aria-labelledby]="headingId">
+  <h2 class="heading" [id]="headingId">
+    <button
+      type="button"
+      class="toggle"
+      [attr.aria-expanded]="!collapsed()"
+      [attr.aria-controls]="bodyId"
+      (click)="toggle()"
+    >
+      @if (step() !== null) {
+        <span class="step">{{ step() }}</span>
+      }
+      <span class="title">{{ heading() }}</span>
+
+      @if (collapsed()) {
+        @if (attention()) {
+          <span class="summary attention">Needs attention</span>
+        } @else if (summary()) {
+          <span class="summary">{{ summary() }}</span>
+        }
+      } @else if (hint()) {
+        <span class="hint-text">{{ hint() }}</span>
+      }
+
+      <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="m6 9 6 6 6-6" />
+      </svg>
+    </button>
+  </h2>
+
+  <div class="body-wrap" [id]="bodyId" [attr.inert]="collapsed() ? '' : null">
+    <div class="body">
+      <div class="body-inner">
+        <ng-content />
+      </div>
+    </div>
+  </div>
+</section>
