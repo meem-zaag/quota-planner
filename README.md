@@ -144,6 +144,15 @@ tonnes) and reviewed the work after each step. I committed the work in stages to
 
 What I independently reviewed and tested:
 
-- [the parts of the code you actually read through, e.g. pricing, the quote store's race-condition handling, the draft parser]
-- Ran `npm run test:ci` myself (36 passing tests)
-- Manually checked [what you tested yourself, e.g. the 5,790 BDT example, drag-and-drop reordering, saving and restoring a draft]
+- Read through and reviewed the core logic: the pricing formulas and trip rules (`domain/`), the
+  quote store's "latest request wins" handling (`quote/quote.store.ts`, `quote/quote-view.ts`),
+  the draft parser (`drafts/draft-parser.ts`) and the form validators (`planner/trip-form.ts`).
+- Ran `npm run test:ci` myself (36 passing tests) and `npm run build`.
+- Manually checked in the browser:
+  - the brief's verification example (A → B → C, 2 × Medium, 5 T, loading only = 5,790 BDT);
+  - reordering drop-offs by drag-and-drop, and the quote changing to "Out of date";
+  - editing the trip while a quote is calculating, and requesting a new quote right away;
+  - validation: already-used locations are disabled in other stops, and messages for cargo over
+    capacity and a pickup time in the past;
+  - saving a draft, refreshing to restore it (with no old quote shown), and "Start over";
+  - a deliberately corrupted draft in localStorage being repaired, with the user told what changed.
