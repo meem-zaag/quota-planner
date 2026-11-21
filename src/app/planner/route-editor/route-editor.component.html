@@ -1,27 +1,24 @@
 @let f = form();
-<section class="card" aria-labelledby="route-title">
-  <header class="card-header">
-    <h2 class="card-title" id="route-title"><span class="step">1</span> Route</h2>
-    <span class="card-hint">Drag drop-offs to reorder</span>
-  </header>
-
+<app-collapsible-card
+  heading="Route"
+  [step]="1"
+  hint="Drag drop-offs to reorder"
+  [summary]="collapsedSummary"
+  [attention]="needsAttention"
+>
   <div class="timeline">
     <!-- Pickup -->
     <div class="stop-row">
       <span class="dot dot-pickup" aria-hidden="true"></span>
       <div class="stop-body">
         <label class="label" for="pickup">Pickup</label>
-        <select
-          id="pickup"
-          class="select"
+        <app-select
+          inputId="pickup"
+          placeholder="Select pickup location"
+          [options]="optionsFor('pickup')"
           [formControl]="f.controls.pickup"
-          [class.invalid]="f.controls.pickup.invalid && f.controls.pickup.touched"
-        >
-          <option [ngValue]="null" disabled>Select pickup location</option>
-          @for (loc of locations; track loc.id) {
-            <option [ngValue]="loc.id" [disabled]="isTaken(loc.id, 'pickup')">{{ loc.name }}</option>
-          }
-        </select>
+          [invalid]="f.controls.pickup.invalid && f.controls.pickup.touched"
+        />
         @if (f.controls.pickup.invalid && f.controls.pickup.touched) {
           <span class="error">Choose a pickup location.</span>
         }
@@ -49,17 +46,13 @@
                   <circle cx="15" cy="12" r="1.6" /><circle cx="9" cy="18" r="1.6" /><circle cx="15" cy="18" r="1.6" />
                 </svg>
               </button>
-              <select
-                class="select"
-                [id]="'dropoff-' + i"
+              <app-select
+                [inputId]="'dropoff-' + i"
+                placeholder="Select drop-off location"
+                [options]="optionsFor(i)"
                 [formControl]="ctrl"
-                [class.invalid]="ctrl.invalid && ctrl.touched"
-              >
-                <option [ngValue]="null" disabled>Select drop-off location</option>
-                @for (loc of locations; track loc.id) {
-                  <option [ngValue]="loc.id" [disabled]="isTaken(loc.id, i)">{{ loc.name }}</option>
-                }
-              </select>
+                [invalid]="ctrl.invalid && ctrl.touched"
+              />
               <div class="row-actions">
                 <button
                   type="button"
@@ -120,4 +113,4 @@
       <span class="summary-km">{{ r.km }} km</span>
     </div>
   }
-</section>
+</app-collapsible-card>

@@ -30,8 +30,7 @@ legend.label {
   cursor: pointer;
   transition:
     border-color 0.15s,
-    background 0.15s,
-    box-shadow 0.15s;
+    background 0.15s;
 }
 .choice:hover {
   border-color: var(--text-subtle);
@@ -39,12 +38,18 @@ legend.label {
 .choice.selected {
   border-color: var(--primary);
   background: var(--primary-soft);
-  box-shadow: inset 0 0 0 1px var(--primary);
 }
+/* Keyboard focus: a border colour change only, no rings */
 .choice:has(input:focus-visible),
-.segment:has(input:focus-visible),
 .toggle:has(input:focus-visible) {
-  box-shadow: var(--focus);
+  border-color: var(--primary);
+}
+.segment:has(input:focus-visible) {
+  background: var(--primary-soft);
+  text-decoration: underline;
+}
+.segment.selected:has(input:focus-visible) {
+  background: var(--primary-hover);
 }
 .choice-title {
   font-weight: 600;
@@ -93,7 +98,7 @@ legend.label {
   position: relative;
 }
 .suffix-wrap .input {
-  padding-right: 64px;
+  padding-right: 36px;
 }
 .suffix {
   position: absolute;
@@ -108,6 +113,9 @@ legend.label {
 .services {
   margin-top: 20px;
 }
+.services .toggle + .toggle {
+  margin-top: 0;
+}
 .toggle {
   display: flex;
   align-items: center;
@@ -119,6 +127,9 @@ legend.label {
 }
 .toggle:hover {
   background: var(--surface-muted);
+}
+.toggle.selected {
+  border-color: var(--primary);
 }
 .toggle input {
   width: 18px;

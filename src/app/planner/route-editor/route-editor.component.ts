@@ -1,6 +1,8 @@
 import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDragPlaceholder, CdkDropList } from '@angular/cdk/drag-drop';
 import { Component, input } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { CollapsibleCardComponent } from '../../shared/collapsible-card/collapsible-card.component';
+import { SelectComponent, SelectOption } from '../../shared/select/select.component';
 import { LOCATIONS, LocationId, MAX_DROPOFFS, MIN_DROPOFFS, locationName, routeDistanceKm } from '../../domain';
 import { TripForm, createDropoffControl } from '../trip-form';
 import { duplicateMessage } from '../trip-form.messages';
@@ -13,7 +15,7 @@ import { duplicateMessage } from '../trip-form.messages';
 @Component({
   selector: 'app-route-editor',
   standalone: true,
-  imports: [ReactiveFormsModule, CdkDropList, CdkDrag, CdkDragHandle, CdkDragPlaceholder],
+  imports: [ReactiveFormsModule, CollapsibleCardComponent, SelectComponent, CdkDropList, CdkDrag, CdkDragHandle, CdkDragPlaceholder],
   templateUrl: './route-editor.component.html',
   styleUrl: './route-editor.component.css',
 })
@@ -62,11 +64,32 @@ export class RouteEditorComponent {
     this.dropoffs.markAsDirty();
   }
 
-  /** A location is unavailable in a select if another stop already uses it. */
-  isTaken(id: LocationId, ownIndex: number | 'pickup'): boolean {
+  /**
+   * Options for one select. A location already used by another stop is disabled
+   * and labelled, so duplicates can't be chosen (the group validator still
+   * guarantees it).
+   */
+  optionsFor(ownIndex: number | 'pickup'): SelectOption<LocationId>[] {
     const { pickup, dropoffs } = this.form().getRawValue();
-    if (ownIndex !== 'pickup' && pickup === id) return true;
-    return dropoffs.some((d, i) => d === id && i !== ownIndex);
+    return this.locations.map((loc) => {
+      let note: string | undefined;
+      if (ownIndex !== 'pickup' && pickup === loc.id) note = 'Used as pickup';
+      const other = dropoffs.findIndex((d, i) => d === loc.id && i !== ownIndex);
+      if (!note && other >= 0) note = `Used as drop-off ${other + 1}`;
+      return { value: loc.id, label: loc.name, disabled: !!note, note };
+    });
+  }
+
+  /** Header text while the card is collapsed. */
+  get collapsedSummary(): string {
+    const r = this.routeSummary;
+    return r ? `${r.names.join(' → ')} · ${r.km} km` : 'Not complete';
+  }
+
+  get needsAttention(): boolean {
+    const f = this.form();
+    const touchedInvalid = [f.controls.pickup, ...this.dropoffs.controls].some((c) => c.invalid && c.touched);
+    return touchedInvalid || !!this.duplicateError;
   }
 
   get duplicateError(): string | null {

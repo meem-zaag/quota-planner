@@ -1,9 +1,5 @@
 @let f = form();
-<section class="card" aria-labelledby="trucks-title">
-  <header class="card-header">
-    <h2 class="card-title" id="trucks-title"><span class="step">2</span> Trucks &amp; cargo</h2>
-  </header>
-
+<app-collapsible-card heading="Trucks & cargo" [step]="2" [summary]="trucksSummary" [attention]="trucksNeedAttention">
   <fieldset class="group">
     <legend class="label">Truck type</legend>
     <div class="truck-grid">
@@ -11,7 +7,7 @@
         <label class="choice" [class.selected]="f.controls.truckCategory.value === t.category">
           <input type="radio" class="sr-only" name="truckCategory" [value]="t.category" [formControl]="f.controls.truckCategory" />
           <span class="choice-title">{{ t.label }}</span>
-          <span class="choice-meta">{{ t.capacityTonnes }} t per truck</span>
+          <span class="choice-meta">{{ t.capacityTonnes }} T per truck</span>
           <span class="choice-meta">{{ t.ratePerKm }} BDT/km · min {{ t.minimumFare.toLocaleString('en-US') }}</span>
         </label>
       }
@@ -48,33 +44,26 @@
           [formControl]="f.controls.cargoWeightTonnes"
           [class.invalid]="(f.controls.cargoWeightTonnes.invalid && f.controls.cargoWeightTonnes.touched) || !!capacityError"
         />
-        <span class="suffix">tonnes</span>
+        <span class="suffix">T</span>
       </div>
       @if (error('cargoWeightTonnes', 'Cargo weight'); as msg) {
         <span class="error">{{ msg }}</span>
       } @else if (capacityError) {
         <span class="error">{{ capacityError }}</span>
       } @else if (capacity !== null) {
-        <span class="hint">Capacity of selected trucks: {{ capacity }} t</span>
+        <span class="hint">Capacity of selected trucks: {{ capacity }} T</span>
       }
     </div>
   </div>
-</section>
+</app-collapsible-card>
 
-<section class="card" aria-labelledby="schedule-title">
-  <header class="card-header">
-    <h2 class="card-title" id="schedule-title"><span class="step">3</span> Schedule &amp; services</h2>
-  </header>
-
+<app-collapsible-card heading="Schedule & services" [step]="3" [summary]="scheduleSummary" [attention]="scheduleNeedsAttention">
   <div class="field">
     <label class="label" for="pickup-time">Pickup date &amp; time</label>
-    <input
-      id="pickup-time"
-      class="input"
-      type="datetime-local"
-      [min]="minDateTime"
+    <app-date-time-picker
+      inputId="pickup-time"
       [formControl]="f.controls.pickupDateTime"
-      [class.invalid]="f.controls.pickupDateTime.invalid && f.controls.pickupDateTime.touched"
+      [invalid]="f.controls.pickupDateTime.invalid && f.controls.pickupDateTime.touched"
     />
     @if (error('pickupDateTime', 'Pickup date & time'); as msg) {
       <span class="error">{{ msg }}</span>
@@ -85,14 +74,14 @@
 
   <fieldset class="group services">
     <legend class="label">Optional services</legend>
-    <label class="toggle">
+    <label class="toggle" [class.selected]="f.controls.loadingAssistance.value">
       <input type="checkbox" [formControl]="f.controls.loadingAssistance" />
       <span class="toggle-text">
         <span>Loading assistance</span>
         <span class="choice-meta">{{ fees.loading }} BDT per truck</span>
       </span>
     </label>
-    <label class="toggle">
+    <label class="toggle" [class.selected]="f.controls.unloadingAssistance.value">
       <input type="checkbox" [formControl]="f.controls.unloadingAssistance" />
       <span class="toggle-text">
         <span>Unloading assistance</span>
@@ -100,4 +89,4 @@
       </span>
     </label>
   </fieldset>
-</section>
+</app-collapsible-card>

@@ -19,7 +19,7 @@ export function capacityMessage(form: TripForm): string | null {
   if (!err) return null;
   const { truckCategory, truckCount } = form.getRawValue();
   const label = truckCategory ? TRUCKS[truckCategory].label : '';
-  return `${err.actual} t exceeds the ${err.capacity} t capacity of ${truckCount} × ${label}. Reduce the weight or add trucks.`;
+  return `${err.actual} T exceeds the ${err.capacity} T capacity of ${truckCount} × ${label}. Reduce the weight or add trucks.`;
 }
 
 export function duplicateMessage(form: TripForm): string | null {

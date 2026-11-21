@@ -35,7 +35,10 @@ npm run build        # production build to dist/
    invalid the button is disabled and a checklist explains what is missing.
 5. **Save draft / Start over**: in the header. Drafts survive refresh and are restored on load.
 
-Verification example from the brief: A → B → C, 2 × Medium, 5 t, loading only → **27 km,
+Each section card can be collapsed by clicking its header. A collapsed card shows a one-line
+summary, or "Needs attention" if it contains errors.
+
+Verification example from the brief: A → B → C, 2 × Medium, 5 T, loading only → **27 km,
 4,590 + 1,200 = 5,790 BDT**.
 
 ## Project structure
@@ -57,6 +60,10 @@ src/app/
     trip-form.messages  User-facing error and checklist text
     trip-planner     Container component: wires form, store and drafts together
     route-editor / shipment-details / quote-panel   UI sections
+  shared/
+    select              Custom dropdown (ControlValueAccessor + CDK Overlay)
+    date-time-picker    Custom calendar + time picker (same value format as datetime-local)
+    collapsible-card    Section card with collapsible body and summary
 ```
 
 ## Main technical decisions
@@ -86,7 +93,14 @@ src/app/
 - **Signals + RxJS.** RxJS handles async streams (timers, cancellation). Signals hold UI state.
   Form events are bridged into signals through a `formVersion` counter.
 - **Plain CSS with design tokens** (CSS variables) instead of a UI library. This keeps
-  dependencies minimal (only the official Angular CDK is added).
+  dependencies minimal (only the official Angular CDK is added). The theme is a neutral charcoal
+  primary on white, and focus states change the border colour instead of drawing glow rings.
+- **Custom dropdown and date-time picker.** Native `<select>` menus and the `datetime-local`
+  popup are drawn by the browser and can't be styled. Both replacements implement
+  `ControlValueAccessor`, so they plug into `[formControl]` like native inputs. They use the CDK
+  Overlay for positioning and outside-click handling, and follow the combobox/listbox ARIA pattern with
+  keyboard support. The picker emits the same `YYYY-MM-DDTHH:mm` string, so validators, drafts
+  and tests didn't change.
 
 ## Significant issues encountered
 
