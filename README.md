@@ -134,25 +134,27 @@ src/app/
 
 ## AI tools disclosure
 
-I used **Claude Code** (Anthropic, Claude Opus 5.5) as an AI coding assistant throughout this
-project. It generated most of the implementation, the automated tests, and the first draft of this
-README, working from the brief and my direction.
+I built this with Claude Code (Anthropic's AI coding assistant, Claude Opus 5.5). Most of the code,
+the tests and the first draft of this README were written by it. I worked through the brief with it
+one step at a time, and committed after each step so I could roll back if something went wrong.
 
-My role: I set the requirements and the UI/UX direction (minimal white theme, dark teal primary,
-border-only focus states, custom dropdown and date-time picker, collapsible sections, "T" for
-tonnes) and reviewed the work after each step. I committed the work in stages to keep control over changes.
+The product decisions were mine. I wanted a minimal white UI, so I asked for a dark teal accent, plain
+borders instead of focus glows, collapsible sections, and "T" for tonnes. I also asked for a custom
+dropdown and date picker, because the browser's native ones looked out of place and the date
+picker blended into the page.
 
-What I independently reviewed and tested:
+I didn't want to submit code I couldn't explain, so I went through the parts that matter most:
 
-- Read through and reviewed the core logic: the pricing formulas and trip rules (`domain/`), the
-  quote store's "latest request wins" handling (`quote/quote.store.ts`, `quote/quote-view.ts`),
-  the draft parser (`drafts/draft-parser.ts`) and the form validators (`planner/trip-form.ts`).
-- Ran `npm run test:ci` myself (36 passing tests) and `npm run build`.
-- Manually checked in the browser:
-  - the brief's verification example (A → B → C, 2 × Medium, 5 T, loading only = 5,790 BDT);
-  - reordering drop-offs by drag-and-drop, and the quote changing to "Out of date";
-  - editing the trip while a quote is calculating, and requesting a new quote right away;
-  - validation: already-used locations are disabled in other stops, and messages for cargo over
-    capacity and a pickup time in the past;
-  - saving a draft, refreshing to restore it (with no old quote shown), and "Start over";
-  - a deliberately corrupted draft in localStorage being repaired, with the user told what changed.
+- the pricing formulas and trip rules in `domain/`;
+- how the quote store makes sure only the latest request is shown, and how a quote gets marked
+  "Out of date" (`quote/quote.store.ts`, `quote/quote-view.ts`);
+- how the draft parser deals with broken saved data (`drafts/draft-parser.ts`);
+- the form validators, especially re-checking the pickup time when a quote is requested
+  (`planner/trip-form.ts`).
+
+I ran `npm run test:ci` (36 tests, all passing) and `npm run build` myself, and then tried the app by
+hand. I checked the example from the brief (A → B → C, 2 × Medium, 5 T, loading only comes to
+5,790 BDT), and reordered drop-offs by dragging. I changed the trip while a quote was still loading
+and clicked "Get quote" several times quickly. I also tried overloading the trucks and setting a
+pickup time that had already passed, saved and restored a draft, and used "Start over". Finally, I
+put a corrupted draft into localStorage to see that the app recovered and explained what it reset.
