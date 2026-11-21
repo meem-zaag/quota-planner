@@ -134,9 +134,16 @@ src/app/
 
 ## AI tools disclosure
 
-> **TODO (author): review and edit this section so it accurately describes your own process before submitting.**
+I used **Claude Code** (Anthropic, Claude Opus 5.5) as an AI coding assistant throughout this
+project. It generated most of the implementation, the automated tests, and the first draft of this
+README, working from the brief and my direction.
 
-This project was built with the help of **Claude Code** (Anthropic's Claude Opus 5.5) as a coding
-assistant, which generated code and tests from my direction and requirements. I reviewed the
-design and code, ran the automated tests, and manually checked the app in the browser (see
-"How correctness was verified").
+My role: I set the requirements and the UI/UX direction (minimal white theme, dark teal primary,
+border-only focus states, custom dropdown and date-time picker, collapsible sections, "T" for
+tonnes) and reviewed the work after each step. I committed the work in stages to keep control over changes.
+
+What I independently reviewed and tested:
+
+- [the parts of the code you actually read through, e.g. pricing, the quote store's race-condition handling, the draft parser]
+- Ran `npm run test:ci` myself (36 passing tests)
+- Manually checked [what you tested yourself, e.g. the 5,790 BDT example, drag-and-drop reordering, saving and restoring a draft]
