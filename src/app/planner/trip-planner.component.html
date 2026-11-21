@@ -1,0 +1,62 @@
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <span class="logo" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z" /><circle cx="7" cy="18" r="1.8" /><circle cx="17.5" cy="18" r="1.8" />
+        </svg>
+      </span>
+      <div>
+        <h1>Trip Quote Planner</h1>
+        <p class="tagline">Multi-stop truck fare estimates</p>
+      </div>
+    </div>
+
+    <div class="draft-actions">
+      <span class="draft-status" aria-live="polite">
+        @if (!storageAvailable) {
+          Drafts unavailable in this browser
+        } @else if (hasUnsavedChanges()) {
+          <span class="dot-status unsaved"></span> Unsaved changes
+        } @else if (savedAt()) {
+          <span class="dot-status saved"></span> Draft saved {{ savedAt() | date: 'shortTime' }}
+        }
+      </span>
+      <button type="button" class="btn btn-ghost" (click)="startOver()" [disabled]="!hasSavedDraft() && !hasUnsavedChanges()">
+        Start over
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="saveDraft()" [disabled]="!storageAvailable || !hasUnsavedChanges()">
+        Save draft
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="layout">
+  @if (notice(); as n) {
+    <div class="banner notice" [class]="'banner-' + n.tone" role="status">
+      <div class="notice-body">
+        {{ n.message }}
+        @if (n.details?.length) {
+          <ul>
+            @for (d of n.details; track d) {
+              <li>{{ d }}</li>
+            }
+          </ul>
+        }
+      </div>
+      <button type="button" class="icon-btn" (click)="dismissNotice()" aria-label="Dismiss message">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" /></svg>
+      </button>
+    </div>
+  }
+
+  <div class="form-col">
+    <app-route-editor [form]="form" />
+    <app-shipment-details [form]="form" />
+  </div>
+
+  <aside class="quote-col">
+    <app-quote-panel [view]="quoteView()" [blockers]="blockers()" (requestQuote)="requestQuote()" />
+  </aside>
+</main>

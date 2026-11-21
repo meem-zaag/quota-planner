@@ -1,0 +1,103 @@
+@let f = form();
+<section class="card" aria-labelledby="trucks-title">
+  <header class="card-header">
+    <h2 class="card-title" id="trucks-title"><span class="step">2</span> Trucks &amp; cargo</h2>
+  </header>
+
+  <fieldset class="group">
+    <legend class="label">Truck type</legend>
+    <div class="truck-grid">
+      @for (t of trucks; track t.category) {
+        <label class="choice" [class.selected]="f.controls.truckCategory.value === t.category">
+          <input type="radio" class="sr-only" name="truckCategory" [value]="t.category" [formControl]="f.controls.truckCategory" />
+          <span class="choice-title">{{ t.label }}</span>
+          <span class="choice-meta">{{ t.capacityTonnes }} t per truck</span>
+          <span class="choice-meta">{{ t.ratePerKm }} BDT/km · min {{ t.minimumFare.toLocaleString('en-US') }}</span>
+        </label>
+      }
+    </div>
+    @if (f.controls.truckCategory.invalid && f.controls.truckCategory.touched) {
+      <span class="error">Select a truck type.</span>
+    }
+  </fieldset>
+
+  <div class="row">
+    <fieldset class="group">
+      <legend class="label">Number of trucks</legend>
+      <div class="segmented" role="radiogroup">
+        @for (n of truckCounts; track n) {
+          <label class="segment" [class.selected]="f.controls.truckCount.value === n">
+            <input type="radio" class="sr-only" name="truckCount" [value]="n" [formControl]="f.controls.truckCount" />
+            {{ n }}
+          </label>
+        }
+      </div>
+    </fieldset>
+
+    <div class="field group">
+      <label class="label" for="weight">Total cargo weight</label>
+      <div class="suffix-wrap">
+        <input
+          id="weight"
+          class="input"
+          type="number"
+          inputmode="decimal"
+          min="0"
+          step="0.1"
+          placeholder="e.g. 4.5"
+          [formControl]="f.controls.cargoWeightTonnes"
+          [class.invalid]="(f.controls.cargoWeightTonnes.invalid && f.controls.cargoWeightTonnes.touched) || !!capacityError"
+        />
+        <span class="suffix">tonnes</span>
+      </div>
+      @if (error('cargoWeightTonnes', 'Cargo weight'); as msg) {
+        <span class="error">{{ msg }}</span>
+      } @else if (capacityError) {
+        <span class="error">{{ capacityError }}</span>
+      } @else if (capacity !== null) {
+        <span class="hint">Capacity of selected trucks: {{ capacity }} t</span>
+      }
+    </div>
+  </div>
+</section>
+
+<section class="card" aria-labelledby="schedule-title">
+  <header class="card-header">
+    <h2 class="card-title" id="schedule-title"><span class="step">3</span> Schedule &amp; services</h2>
+  </header>
+
+  <div class="field">
+    <label class="label" for="pickup-time">Pickup date &amp; time</label>
+    <input
+      id="pickup-time"
+      class="input"
+      type="datetime-local"
+      [min]="minDateTime"
+      [formControl]="f.controls.pickupDateTime"
+      [class.invalid]="f.controls.pickupDateTime.invalid && f.controls.pickupDateTime.touched"
+    />
+    @if (error('pickupDateTime', 'Pickup date & time'); as msg) {
+      <span class="error">{{ msg }}</span>
+    } @else {
+      <span class="hint">Must be later than the current time.</span>
+    }
+  </div>
+
+  <fieldset class="group services">
+    <legend class="label">Optional services</legend>
+    <label class="toggle">
+      <input type="checkbox" [formControl]="f.controls.loadingAssistance" />
+      <span class="toggle-text">
+        <span>Loading assistance</span>
+        <span class="choice-meta">{{ fees.loading }} BDT per truck</span>
+      </span>
+    </label>
+    <label class="toggle">
+      <input type="checkbox" [formControl]="f.controls.unloadingAssistance" />
+      <span class="toggle-text">
+        <span>Unloading assistance</span>
+        <span class="choice-meta">{{ fees.unloading }} BDT per truck</span>
+      </span>
+    </label>
+  </fieldset>
+</section>

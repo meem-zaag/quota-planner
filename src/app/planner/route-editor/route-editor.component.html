@@ -1,0 +1,123 @@
+@let f = form();
+<section class="card" aria-labelledby="route-title">
+  <header class="card-header">
+    <h2 class="card-title" id="route-title"><span class="step">1</span> Route</h2>
+    <span class="card-hint">Drag drop-offs to reorder</span>
+  </header>
+
+  <div class="timeline">
+    <!-- Pickup -->
+    <div class="stop-row">
+      <span class="dot dot-pickup" aria-hidden="true"></span>
+      <div class="stop-body">
+        <label class="label" for="pickup">Pickup</label>
+        <select
+          id="pickup"
+          class="select"
+          [formControl]="f.controls.pickup"
+          [class.invalid]="f.controls.pickup.invalid && f.controls.pickup.touched"
+        >
+          <option [ngValue]="null" disabled>Select pickup location</option>
+          @for (loc of locations; track loc.id) {
+            <option [ngValue]="loc.id" [disabled]="isTaken(loc.id, 'pickup')">{{ loc.name }}</option>
+          }
+        </select>
+        @if (f.controls.pickup.invalid && f.controls.pickup.touched) {
+          <span class="error">Choose a pickup location.</span>
+        }
+      </div>
+    </div>
+
+    <!-- Drop-offs (drag & drop) -->
+    <div cdkDropList cdkDropListLockAxis="y" class="drop-list" (cdkDropListDropped)="drop($event)">
+      @for (ctrl of dropoffs.controls; track ctrl; let i = $index, first = $first, last = $last) {
+        <div class="stop-row draggable" cdkDrag>
+          <div class="drag-placeholder" *cdkDragPlaceholder></div>
+          <span class="dot dot-drop" aria-hidden="true">{{ i + 1 }}</span>
+          <div class="stop-body">
+            <label class="label" [for]="'dropoff-' + i">Drop-off {{ i + 1 }}</label>
+            <div class="stop-controls">
+              <button
+                type="button"
+                class="icon-btn handle"
+                cdkDragHandle
+                [attr.aria-label]="'Drag to reorder drop-off ' + (i + 1)"
+                title="Drag to reorder"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <circle cx="9" cy="6" r="1.6" /><circle cx="15" cy="6" r="1.6" /><circle cx="9" cy="12" r="1.6" />
+                  <circle cx="15" cy="12" r="1.6" /><circle cx="9" cy="18" r="1.6" /><circle cx="15" cy="18" r="1.6" />
+                </svg>
+              </button>
+              <select
+                class="select"
+                [id]="'dropoff-' + i"
+                [formControl]="ctrl"
+                [class.invalid]="ctrl.invalid && ctrl.touched"
+              >
+                <option [ngValue]="null" disabled>Select drop-off location</option>
+                @for (loc of locations; track loc.id) {
+                  <option [ngValue]="loc.id" [disabled]="isTaken(loc.id, i)">{{ loc.name }}</option>
+                }
+              </select>
+              <div class="row-actions">
+                <button
+                  type="button"
+                  class="icon-btn"
+                  [disabled]="first"
+                  (click)="move(i, i - 1)"
+                  [attr.aria-label]="'Move drop-off ' + (i + 1) + ' up'"
+                  title="Move up"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m18 15-6-6-6 6" /></svg>
+                </button>
+                <button
+                  type="button"
+                  class="icon-btn"
+                  [disabled]="last"
+                  (click)="move(i, i + 1)"
+                  [attr.aria-label]="'Move drop-off ' + (i + 1) + ' down'"
+                  title="Move down"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+                </button>
+                <button
+                  type="button"
+                  class="icon-btn danger"
+                  [disabled]="!canRemove"
+                  (click)="remove(i)"
+                  [attr.aria-label]="'Remove drop-off ' + (i + 1)"
+                  [title]="canRemove ? 'Remove' : 'At least one drop-off is required'"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" /></svg>
+                </button>
+              </div>
+            </div>
+            @if (ctrl.invalid && ctrl.touched) {
+              <span class="error">Choose a drop-off location.</span>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="footer">
+    <button type="button" class="btn btn-secondary" (click)="add()" [disabled]="!canAdd">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+      Add drop-off
+    </button>
+    <span class="hint">{{ dropoffs.length }} of {{ maxDropoffs }} drop-offs</span>
+  </div>
+
+  @if (duplicateError; as msg) {
+    <p class="banner banner-danger" role="alert">{{ msg }}</p>
+  }
+
+  @if (routeSummary; as r) {
+    <div class="summary" aria-live="polite">
+      <span class="summary-route">{{ r.names.join(' → ') }}</span>
+      <span class="summary-km">{{ r.km }} km</span>
+    </div>
+  }
+</section>

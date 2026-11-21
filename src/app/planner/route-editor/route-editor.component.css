@@ -1,0 +1,113 @@
+.timeline {
+  position: relative;
+}
+/* Vertical connector line between the stop dots */
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 36px;
+  bottom: 30px;
+  width: 2px;
+  background: var(--border);
+}
+
+.stop-row {
+  position: relative;
+  display: flex;
+  gap: 14px;
+  padding: 8px 0;
+}
+.stop-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.stop-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.row-actions {
+  display: flex;
+  gap: 2px;
+}
+
+.dot {
+  position: relative;
+  outline: 4px solid var(--surface); /* gap around the dot on the connector line */
+  z-index: 1;
+  flex: none;
+  margin-top: 30px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 700;
+}
+.dot-pickup {
+  background: var(--success-soft);
+  box-shadow: inset 0 0 0 6px var(--success);
+}
+.dot-drop {
+  background: var(--primary);
+  color: #fff;
+}
+
+.handle {
+  cursor: grab;
+}
+.handle:active {
+  cursor: grabbing;
+}
+
+.drag-placeholder {
+  height: 64px;
+  margin: 8px 0 8px 38px;
+  border: 2px dashed var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface-muted);
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 12px 0 0 38px;
+}
+
+.banner {
+  margin-top: 14px;
+}
+
+.summary {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-muted);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+}
+.summary-route {
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.summary-km {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+@media (max-width: 520px) {
+  .row-actions .icon-btn:not(.danger) {
+    display: none; /* drag handle remains; keeps rows compact on phones */
+  }
+}

@@ -1,0 +1,141 @@
+:host {
+  display: contents;
+}
+.group {
+  border: none;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+legend.label {
+  padding: 0;
+  margin-bottom: 8px;
+}
+
+.truck-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.choice {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    background 0.15s,
+    box-shadow 0.15s;
+}
+.choice:hover {
+  border-color: var(--text-subtle);
+}
+.choice.selected {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+.choice:has(input:focus-visible),
+.segment:has(input:focus-visible),
+.toggle:has(input:focus-visible) {
+  box-shadow: var(--focus);
+}
+.choice-title {
+  font-weight: 600;
+}
+.choice-meta {
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 20px;
+  margin-top: 20px;
+  align-items: start;
+}
+
+.segmented {
+  display: inline-flex;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  height: 40px;
+}
+.segment {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  font-weight: 500;
+  cursor: pointer;
+  border-right: 1px solid var(--border);
+  transition: background 0.15s;
+}
+.segment:last-child {
+  border-right: none;
+}
+.segment:hover {
+  background: var(--surface-muted);
+}
+.segment.selected {
+  background: var(--primary);
+  color: #fff;
+}
+
+.suffix-wrap {
+  position: relative;
+}
+.suffix-wrap .input {
+  padding-right: 64px;
+}
+.suffix {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 13px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.services {
+  margin-top: 20px;
+}
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.toggle:hover {
+  background: var(--surface-muted);
+}
+.toggle input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary);
+  margin: 0;
+}
+.toggle-text {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 640px) {
+  .truck-grid {
+    grid-template-columns: 1fr;
+  }
+  .row {
+    grid-template-columns: 1fr;
+  }
+}

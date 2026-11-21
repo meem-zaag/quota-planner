@@ -1,0 +1,114 @@
+@let v = view();
+<section class="card panel" aria-labelledby="quote-title">
+  <header class="card-header">
+    <h2 class="card-title" id="quote-title">Fare estimate</h2>
+    @switch (v.kind) {
+      @case ('ready') {
+        <span class="badge badge-success">Up to date</span>
+      }
+      @case ('outdated') {
+        <span class="badge badge-warning">Out of date</span>
+      }
+      @case ('pending') {
+        <span class="badge badge-info">Calculating</span>
+      }
+    }
+  </header>
+
+  <div class="body" aria-live="polite" [attr.aria-busy]="isPending()">
+    @switch (v.kind) {
+      @case ('empty') {
+        <div class="empty">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z" /><circle cx="7" cy="18" r="1.8" /><circle cx="17.5" cy="18" r="1.8" />
+          </svg>
+          <p class="empty-title">No estimate yet</p>
+          <p class="hint">Fill in the trip details, then select <strong>Get quote</strong>.</p>
+        </div>
+      }
+
+      @case ('pending') {
+        <div class="loading">
+          <span class="spinner" aria-hidden="true"></span>
+          <p>Calculating your quote…</p>
+        </div>
+        @if (v.inputsChanged) {
+          <p class="banner banner-warning">You changed the trip after requesting. This result will be marked out of date. Request again to price the latest details.</p>
+        }
+      }
+
+      @case ('ready') {
+        @if (details(); as d) {
+          <p class="route">{{ d.route }}</p>
+          <dl class="lines">
+            <div class="line">
+              <dt>Distance</dt>
+              <dd>{{ v.quote.distanceKm }} km</dd>
+            </div>
+            <div class="line">
+              <dt>
+                Transport
+                <span class="sub">{{ v.quote.farePerTruck | number }} BDT × {{ d.truckCount }} {{ d.truckLabel }}</span>
+                @if (d.minimumFareApplied) {
+                  <span class="sub">Minimum fare applied</span>
+                }
+              </dt>
+              <dd>{{ v.quote.transportCost | number }} BDT</dd>
+            </div>
+            <div class="line">
+              <dt>
+                Optional services
+                <span class="sub">{{ d.services || 'None selected' }}</span>
+              </dt>
+              <dd>{{ v.quote.serviceCost | number }} BDT</dd>
+            </div>
+          </dl>
+          <div class="total">
+            <span>Total</span>
+            <strong data-testid="total">{{ v.quote.totalQuote | number }} BDT</strong>
+          </div>
+        }
+      }
+
+      @case ('outdated') {
+        <div class="banner banner-warning" role="status">
+          <div>
+            <strong>Trip details changed.</strong>
+            The previous estimate no longer matches your trip. Get a new quote to see the updated price.
+          </div>
+        </div>
+      }
+
+      @case ('error') {
+        <div class="banner banner-danger" role="alert">
+          <div>
+            <strong>We couldn't price this trip.</strong>
+            <ul>
+              @for (p of v.problems; track p) {
+                <li>{{ p }}</li>
+              }
+            </ul>
+          </div>
+        </div>
+      }
+    }
+  </div>
+
+  <button type="button" class="btn btn-primary btn-block" [disabled]="!canRequest()" (click)="requestQuote.emit()">
+    @if (isPending()) {
+      <span class="spinner spinner-sm" aria-hidden="true"></span>
+    }
+    {{ buttonLabel() }}
+  </button>
+
+  @if (!canRequest()) {
+    <div class="blockers">
+      <p class="hint">To get a quote:</p>
+      <ul>
+        @for (b of blockers(); track b) {
+          <li>{{ b }}</li>
+        }
+      </ul>
+    </div>
+  }
+</section>
