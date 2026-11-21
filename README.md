@@ -136,7 +136,7 @@ src/app/
 
 I built this with Claude Code (Anthropic's AI coding assistant, Claude Opus 5.5). Most of the code,
 the tests and the first draft of this README were written by it. I worked through the brief with it
-one step at a time, and committed after each step so I could roll back if something went wrong.
+one step at a time.
 
 The product decisions were mine. I wanted a minimal white UI, so I asked for a dark teal accent, plain
 borders instead of focus glows, collapsible sections, and "T" for tonnes. I also asked for a custom
